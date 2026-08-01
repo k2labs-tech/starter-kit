@@ -45,7 +45,22 @@ php artisan kit:install --dependency   # skip the question
 php artisan kit:install --own          # skip it the other way
 ```
 
-### 2. Whether you want Flux UI Pro
+### 2. The database
+
+The installer asks for the connection before anything else: driver (sqlite,
+mysql, mariadb or pgsql) and then only what that driver needs — file path for
+sqlite, host, port, database, user and password for the rest. It **tests the
+connection before writing anything** and asks again if it fails, showing the
+driver's own error.
+
+The answers go to `.env`, so you can change them later by hand. To be asked
+again on an already-working project:
+
+```bash
+php artisan base-tenant:install --database
+```
+
+### 3. Whether you want Flux UI Pro
 
 Optional. **The kit and the package use only free Flux components**, so Pro buys
 you nothing unless you want its own components — charts, date pickers, tables,
@@ -62,6 +77,20 @@ php artisan serve
 ```
 
 Sign in at `/login` with `admin@example.com` / `secret123`.
+
+### Rebuilding from scratch
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+That drops everything, re-runs the migrations and seeds the permission
+catalogue, the global roles, the product menus and the administrator — a working
+application, not an empty schema. `database/seeders/DatabaseSeeder.php` is where
+to add your own.
+
+Change the seeded administrator with `BASE_TENANT_ADMIN_EMAIL` and
+`BASE_TENANT_ADMIN_PASSWORD` before running it anywhere real.
 
 ## Building on it
 
