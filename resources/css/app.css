@@ -9,6 +9,11 @@
    Flux: Tailwind fusiona los bloques `@theme` en orden y gana el último. */
 @import '../../vendor/base/tenant/resources/css/base-tenant.css';
 
+/* Sin esto, `dark:` compila a `prefers-color-scheme` y sigue al sistema
+   operativo, mientras el conmutador de apariencia pone la clase `.dark` en el
+   `<html>`: cambiarían los componentes de Flux y nada más. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
