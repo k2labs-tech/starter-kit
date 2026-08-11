@@ -1,50 +1,26 @@
 @import 'tailwindcss';
 
+/* El armazón de Flux (barra lateral, cabecera, contenido) se coloca con
+   `grid-template-areas` desde esta hoja. Sin ella los tres se apilan en
+   vertical y ningún componente lleva estilo. */
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+/* Escalas de estado y `accent` que usan las vistas del paquete. Va después de
+   Flux: Tailwind fusiona los bloques `@theme` en orden y gana el último. */
+@import '../../vendor/base/tenant/resources/css/base-tenant.css';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* Las vistas del paquete viven fuera de `resources/`, así que Tailwind no las
+   mira si no se le dice. Se declaran las dos rutas porque el paquete puede
+   estar enlazado en desarrollo o instalado en `vendor/`. */
+@source '../../base-tenant/resources/views/**/*.blade.php';
+@source '../../vendor/base/tenant/resources/views/**/*.blade.php';
+
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    /* Flux UI color aliases - map to standard Tailwind colors */
-    --color-surface-50: var(--color-gray-50);
-    --color-surface-100: var(--color-gray-100);
-    --color-surface-200: var(--color-gray-200);
-    --color-surface-300: var(--color-gray-300);
-    --color-surface-400: var(--color-gray-400);
-    --color-surface-500: var(--color-gray-500);
-    --color-surface-600: var(--color-gray-600);
-    --color-surface-700: var(--color-gray-700);
-    --color-surface-800: var(--color-gray-800);
-    --color-surface-900: var(--color-gray-900);
-
-    --color-primary-50: var(--color-zinc-50);
-    --color-primary-100: var(--color-zinc-100);
-    --color-primary-200: var(--color-zinc-200);
-    --color-primary-300: var(--color-zinc-300);
-    --color-primary-400: var(--color-zinc-400);
-    --color-primary-500: var(--color-zinc-500);
-    --color-primary-600: var(--color-zinc-600);
-    --color-primary-700: var(--color-zinc-700);
-    --color-primary-800: var(--color-zinc-800);
-    --color-primary-900: var(--color-zinc-900);
-
-    --color-accent-50: var(--color-violet-50);
-    --color-accent-100: var(--color-violet-100);
-    --color-accent-200: var(--color-violet-200);
-    --color-accent-300: var(--color-violet-300);
-    --color-accent-400: var(--color-violet-400);
-    --color-accent-500: var(--color-violet-500);
-    --color-accent-600: var(--color-violet-600);
-    --color-accent-700: var(--color-violet-700);
-    --color-accent-800: var(--color-violet-800);
-    --color-accent-900: var(--color-violet-900);
-
-    --color-success: var(--color-green-500);
-    --color-error: var(--color-red-500);
-    --color-warning: var(--color-amber-500);
-    --color-info: var(--color-blue-500);
-
 }
