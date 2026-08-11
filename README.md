@@ -57,7 +57,7 @@ The answers go to `.env`, so you can change them later by hand. To be asked
 again on an already-working project:
 
 ```bash
-php artisan base-tenant:install --database
+php artisan k2labs-base:install --database
 ```
 
 ### 3. Whether you want Flux UI Pro
@@ -106,7 +106,7 @@ class Invoice extends Model
 ```
 
 Declare your permissions in `config/base-tenant.php`, then run
-`php artisan base-tenant:sync-roles`:
+`php artisan k2labs-base:sync-roles`:
 
 ```php
 'permissions' => [
@@ -114,7 +114,7 @@ Declare your permissions in `config/base-tenant.php`, then run
 ],
 ```
 
-Add navigation from a service provider, then `php artisan base-tenant:sync-menus`:
+Add navigation from a service provider, then `php artisan k2labs-base:sync-menus`:
 
 ```php
 Menu::register('main', function (MenuBuilder $menu): void {
@@ -135,11 +135,11 @@ $this->assertTenantIsolated(Invoice::class, fn ($account) => Invoice::factory()-
 ## Taking ownership later
 
 ```bash
-php artisan base-tenant:scaffold --dry-run   # see exactly what would move
-php artisan base-tenant:scaffold             # ~255 files into app/, resources/, routes/
+php artisan k2labs-base:scaffold --dry-run   # see exactly what would move
+php artisan k2labs-base:scaffold             # ~255 files into app/, resources/, routes/
 composer dump-autoload
 # run your suite, read the diff, then:
-php artisan base-tenant:eject
+php artisan k2labs-base:eject
 ```
 
 While scaffolded, the package stands down so nothing is registered twice, and you

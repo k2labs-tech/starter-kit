@@ -221,7 +221,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Every granular ability the application knows about, grouped for the
-    | role editor. Add your own groups here; `base-tenant:sync-roles` writes
+    | role editor. Add your own groups here; `k2labs-base:sync-roles` writes
     | them to the database.
     |
     | Labels come from the `base-tenant::permissions` translation file, keyed

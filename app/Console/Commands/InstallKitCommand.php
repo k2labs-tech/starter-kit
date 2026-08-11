@@ -35,7 +35,7 @@ class InstallKitCommand extends Command
             return self::FAILURE;
         }
 
-        if ($this->call('base-tenant:install') !== self::SUCCESS) {
+        if ($this->call('k2labs-base:install') !== self::SUCCESS) {
             $this->components->error('The package installer did not finish. Fix the problem and run `php artisan kit:install` again.');
 
             return self::FAILURE;
@@ -95,7 +95,7 @@ class InstallKitCommand extends Command
         $this->newLine();
         $this->components->info('Copying the package into this project…');
 
-        if ($this->call('base-tenant:scaffold', ['--overwrite' => true]) !== self::SUCCESS) {
+        if ($this->call('k2labs-base:scaffold', ['--overwrite' => true]) !== self::SUCCESS) {
             $this->components->error('Scaffolding failed. The package is still installed and working; nothing was lost.');
 
             return self::FAILURE;
@@ -104,9 +104,9 @@ class InstallKitCommand extends Command
         $this->newLine();
         $this->components->info('Removing the package…');
 
-        if ($this->call('base-tenant:eject', ['--force' => true]) !== self::SUCCESS) {
+        if ($this->call('k2labs-base:eject', ['--force' => true]) !== self::SUCCESS) {
             $this->components->warn('The code was copied but the package was not removed.');
-            $this->line('  Run <fg=cyan>php artisan base-tenant:eject</> when you are ready.');
+            $this->line('  Run <fg=cyan>php artisan k2labs-base:eject</> when you are ready.');
 
             return self::SUCCESS;
         }
@@ -124,10 +124,10 @@ class InstallKitCommand extends Command
         $this->line('  <options=bold>base/tenant</> stays a dependency. To update it:');
         $this->line('    <fg=cyan>composer update base/tenant</>');
         $this->line('    <fg=cyan>php artisan migrate</>');
-        $this->line('    <fg=cyan>php artisan base-tenant:sync-roles && php artisan base-tenant:sync-menus</>');
+        $this->line('    <fg=cyan>php artisan k2labs-base:sync-roles && php artisan k2labs-base:sync-menus</>');
         $this->newLine();
         $this->line('  To take ownership of the code later:');
-        $this->line('    <fg=cyan>php artisan base-tenant:scaffold --dry-run</>');
+        $this->line('    <fg=cyan>php artisan k2labs-base:scaffold --dry-run</>');
         $this->newLine();
         $this->line('  <fg=gray>See vendor/base/tenant/docs/SCAFFOLD-EJECT.md</>');
         $this->newLine();
