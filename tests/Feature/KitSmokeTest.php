@@ -58,7 +58,15 @@ test('guests are redirected from the dashboard to the login page', function () {
 test('the login and register pages render', function () {
     Tenant::forget();
 
-    $this->get('/login')->assertOk()->assertSee('name="email"', false);
+    // Se comprueba `autocomplete`, no `name`: Flux deriva el atributo `name`
+    // del `wire:model`, así que el campo sale como `form.email`, y ese mismo
+    // nombre es el que usa para localizar el error de credenciales. Forzarlo a
+    // `email` dejaría el formulario mudo. `autocomplete` es además lo que
+    // gobierna de verdad a los gestores de contraseñas.
+    $this->get('/login')->assertOk()
+        ->assertSee('autocomplete="username"', false)
+        ->assertSee('autocomplete="current-password"', false);
+
     $this->get('/register')->assertOk();
 });
 

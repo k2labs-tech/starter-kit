@@ -22,7 +22,7 @@ laravel new my-app --using=k2/base-tenant-kit
 | **Billing** | Laravel Cashier with plan-based feature gates |
 | **Test kit** | `assertTenantIsolated`, `assertJobCarriesTenant`, `assertPermissionIsAccountScoped` |
 
-Stack: Laravel 12, Livewire 4, Flux UI, Tailwind, Pest.
+Stack: Laravel 13, Livewire 4, Flux UI, Tailwind 4, Pest.
 
 ## Installation
 
