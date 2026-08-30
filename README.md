@@ -1,12 +1,23 @@
 # Base Tenant Starter Kit
 
-A Laravel starter kit for multi-tenant B2B SaaS. It gives you accounts, granular
+A Laravel starter kit for multi-tenant B2B SaaS. Accounts, per-account
 permissions, database-driven navigation, feature flags, invitations, an audit
-trail and Stripe billing on the first commit.
+trail, Stripe billing and twelve capability modules — on the first commit,
+before any of your code.
 
 ```bash
+# Once the kit is published:
 laravel new my-app --using=k2/base-tenant-kit
+
+# Today, from a local checkout — see Local development below:
+composer create-project k2/base-tenant-kit my-app --repository='…' --stability=dev
 ```
+
+> **Proprietary,** and the distribution channel is not settled yet, so the first
+> command does not work yet. The second one does.
+
+**Requires** PHP 8.4 · Laravel 13 · Livewire 4 · Flux UI 2.4 (free tier is
+enough) · MySQL, PostgreSQL, MariaDB or SQLite
 
 ## What you get
 
@@ -58,7 +69,8 @@ Stack: Laravel 13, Livewire 4, Flux UI (free tier), Tailwind 4, Pest.
 
 ## Installation
 
-Creating a project runs `php artisan kit:install`, which asks two things.
+However the project is created, it ends by running `php artisan kit:install`,
+which asks three things.
 
 ### 1. How the project should relate to the package
 
@@ -215,7 +227,7 @@ can still go back by setting `installation_state` to `installed`. Full details i
 
 ## Local development of the kit
 
-The kit resolves `base/tenant` from a sibling checkout:
+The kit resolves `base/tenant` from a **sibling** checkout:
 
 ```json
 "repositories": {
@@ -223,8 +235,27 @@ The kit resolves `base/tenant` from a sibling checkout:
 }
 ```
 
-Clone both side by side. Before publishing to Packagist, drop that block so the
-package resolves from there instead.
+That path is relative to the *generated project*, so both checkouts and the new
+project have to live in the same directory:
+
+```bash
+cd ~/Projects            # where base-tenant and base-tenant-kit already are
+
+composer create-project k2/base-tenant-kit my-app \
+  --repository='{"type":"path","url":"'$PWD'/base-tenant-kit","options":{"symlink":false}}' \
+  --stability=dev \
+  --remove-vcs
+```
+
+`symlink: false` for the kit, because it is a starting point and you want a real
+copy. The package stays symlinked through the block above, so edits to
+`base-tenant` show up in the project immediately.
+
+Creating it anywhere else fails with `base/tenant ^3.0 could not be found` —
+`../base-tenant` does not resolve.
+
+Before publishing, drop the `repositories` block so the package resolves from
+wherever it ends up being distributed.
 
 ## Documentation
 
@@ -248,3 +279,10 @@ php artisan k2labs-base:publish-agent-docs
 
 Re-runnable after every `composer update`: the package's section sits between
 markers and whatever the project wrote around it is left alone.
+
+## Licence
+
+Proprietary. The package's licence is in `vendor/base/tenant/docs/LICENSE.md`.
+
+> Before this repository is published: `composer.json` carries no author or
+> homepage, and there is no `LICENSE` file at the repository root.
