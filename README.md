@@ -411,8 +411,11 @@ inherits the kit's `vendor/`, its `node_modules/` and — worse — its `.env`.
 `--no-install --no-scripts` keeps `composer install` and the installer from
 running until that is cleaned up.
 
-Before publishing, drop the `repositories` block, and re-lock so `composer.lock`
-stops pointing at `/Users/…/base-tenant`.
+The kit ships without a `composer.lock`: a lock would pin the absolute path of
+whoever generated it. Each project resolves its own on the first
+`composer install`, and should commit it.
+
+Before publishing, drop the `repositories` block.
 
 ## Documentation
 
