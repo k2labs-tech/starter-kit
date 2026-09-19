@@ -1,7 +1,7 @@
 # Website specification — base-tenant starter kit
 
 The public site for the starter kit. A sibling specification lives in the
-`base/tenant` repository for the package's own site. The two share a design
+`k2labs/base-tenant` repository for the package's own site. The two share a design
 system and cross-link, but they are **not the same site with two skins**: they
 are read by people in different moments, deciding different things.
 

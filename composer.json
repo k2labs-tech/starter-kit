@@ -16,7 +16,7 @@
         "php": "^8.4",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^2.10.1|^3.0",
-        "base/tenant": "^3.0"
+        "k2labs/base-tenant": "^3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -94,13 +94,13 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "repositories": {
-        "base/tenant": {
+        "k2labs/base-tenant": {
             "type": "path",
             "url": "~/Projects/base-tenant",
             "options": {
                 "symlink": true,
                 "versions": {
-                    "base/tenant": "3.0.0"
+                    "k2labs/base-tenant": "3.0.0"
                 }
             }
         }

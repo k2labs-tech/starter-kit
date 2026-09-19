@@ -7,7 +7,7 @@
 
 /* Escalas de estado y `accent` que usan las vistas del paquete. Va después de
    Flux: Tailwind fusiona los bloques `@theme` en orden y gana el último. */
-@import '../../vendor/base/tenant/resources/css/base-tenant.css';
+@import '../../vendor/k2labs/base-tenant/resources/css/base-tenant.css';
 
 /* Sin esto, `dark:` compila a `prefers-color-scheme` y sigue al sistema
    operativo, mientras el conmutador de apariencia pone la clase `.dark` en el
@@ -23,7 +23,7 @@
    mira si no se le dice. Se declaran las dos rutas porque el paquete puede
    estar enlazado en desarrollo o instalado en `vendor/`. */
 @source '../../base-tenant/resources/views/**/*.blade.php';
-@source '../../vendor/base/tenant/resources/views/**/*.blade.php';
+@source '../../vendor/k2labs/base-tenant/resources/views/**/*.blade.php';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',

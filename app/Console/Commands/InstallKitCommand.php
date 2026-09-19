@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 /**
  * Sets up a project created from this starter kit.
  *
- * The interesting decision is made here: whether the project keeps `base/tenant`
+ * The interesting decision is made here: whether the project keeps `k2labs/base-tenant`
  * as an updatable dependency, or takes ownership of the code and drops the
  * package the way Laravel's own starter kits work.
  */
@@ -19,7 +19,7 @@ class InstallKitCommand extends Command
         {--own : Take ownership of the code and remove the package, without asking}
         {--dependency : Keep the package as a dependency, without asking}';
 
-    protected $description = 'Set up this project and choose how it relates to base/tenant';
+    protected $description = 'Set up this project and choose how it relates to k2labs/base-tenant';
 
     public function handle(): int
     {
@@ -64,7 +64,7 @@ class InstallKitCommand extends Command
             return false;
         }
 
-        $this->line('  This project can relate to <options=bold>base/tenant</> in two ways.');
+        $this->line('  This project can relate to <options=bold>k2labs/base-tenant</> in two ways.');
         $this->newLine();
         $this->line('  <options=bold>As a dependency</> — tenancy, permissions, navigation and billing');
         $this->line('  live in the package. You get fixes and new features with <fg=cyan>composer update</>.');
@@ -76,7 +76,7 @@ class InstallKitCommand extends Command
         $this->newLine();
 
         return match ($this->choice(
-            'How should this project use base/tenant?',
+            'How should this project use k2labs/base-tenant?',
             [
                 'Keep it as a dependency (recommended, reversible)',
                 'Copy the code in and remove the package',
@@ -121,15 +121,15 @@ class InstallKitCommand extends Command
         $this->newLine();
         $this->components->info('Ready.');
         $this->newLine();
-        $this->line('  <options=bold>base/tenant</> stays a dependency. To update it:');
-        $this->line('    <fg=cyan>composer update base/tenant</>');
+        $this->line('  <options=bold>k2labs/base-tenant</> stays a dependency. To update it:');
+        $this->line('    <fg=cyan>composer update k2labs/base-tenant</>');
         $this->line('    <fg=cyan>php artisan migrate</>');
         $this->line('    <fg=cyan>php artisan k2labs-base:sync-roles && php artisan k2labs-base:sync-menus</>');
         $this->newLine();
         $this->line('  To take ownership of the code later:');
         $this->line('    <fg=cyan>php artisan k2labs-base:scaffold --dry-run</>');
         $this->newLine();
-        $this->line('  <fg=gray>See vendor/base/tenant/docs/SCAFFOLD-EJECT.md</>');
+        $this->line('  <fg=gray>See vendor/k2labs/base-tenant/docs/SCAFFOLD-EJECT.md</>');
         $this->newLine();
     }
 

@@ -115,7 +115,7 @@ cd my-app
 # 2. Drop what Composer copied over from the kit checkout
 rm -rf vendor node_modules .env
 
-# 3. Install — base/tenant is symlinked from ~/Projects/base-tenant
+# 3. Install — k2labs/base-tenant is symlinked from ~/Projects/base-tenant
 composer install
 cp .env.example .env && php artisan key:generate
 
@@ -129,7 +129,7 @@ Why each flag is there is explained in
 [Creating a project from a local checkout](#creating-a-project-from-a-local-checkout).
 
 If the checkouts live somewhere other than `~/Projects`, change the `url` in the
-command above and the `base/tenant` repository in `composer.json`.
+command above and the `k2labs/base-tenant` repository in `composer.json`.
 
 ### What `kit:install` asks
 
@@ -139,7 +139,7 @@ which asks three things.
 #### 1. How the project should relate to the package
 
 **As a dependency** *(recommended)* — the tenancy, permission and navigation code
-lives in `base/tenant`. You get fixes and features with `composer update`. You can
+lives in `k2labs/base-tenant`. You get fixes and features with `composer update`. You can
 take ownership later, at any time, without redoing anything.
 
 **As your own code** — everything is copied into the project and the package is
@@ -273,7 +273,7 @@ Webhook::dispatch('invoice.issued', ['id' => $invoice->id]);
 ```
 
 The full list, with the reasoning behind each one, is in
-`vendor/base/tenant/docs/USAGE.md`.
+`vendor/k2labs/base-tenant/docs/USAGE.md`.
 
 ## Security
 
@@ -300,7 +300,7 @@ authenticated route stack in `config/base-tenant.php`:
 Put them on route groups like this, never in the global middleware stack:
 Livewire replays only route middleware on its update requests.
 
-Details in `vendor/base/tenant/docs/agents/16-security.md`.
+Details in `vendor/k2labs/base-tenant/docs/agents/16-security.md`.
 
 ## Running it in production
 
@@ -347,7 +347,7 @@ For your own models, the package's `TenancyAssertions` trait gives you
 ## Project structure
 
 The kit is a standard Laravel 13 application; everything multi-tenant lives in
-`vendor/base/tenant` until you take ownership of it.
+`vendor/k2labs/base-tenant` until you take ownership of it.
 
 | | |
 |---|---|
@@ -372,16 +372,16 @@ php artisan k2labs-base:eject
 
 While scaffolded, the package stands down so nothing is registered twice, and you
 can still go back by setting `installation_state` to `installed`. Full details in
-`vendor/base/tenant/docs/SCAFFOLD-EJECT.md`.
+`vendor/k2labs/base-tenant/docs/SCAFFOLD-EJECT.md`.
 
 ## Creating a project from a local checkout
 
 The kit is not published yet, so `composer create-project` reads it from this
-checkout. The kit resolves `base/tenant` the same way, from an absolute path:
+checkout. The kit resolves `k2labs/base-tenant` the same way, from an absolute path:
 
 ```json
 "repositories": {
-    "base/tenant": { "type": "path", "url": "~/Projects/base-tenant" }
+    "k2labs/base-tenant": { "type": "path", "url": "~/Projects/base-tenant" }
 }
 ```
 
@@ -419,7 +419,7 @@ Before publishing, drop the `repositories` block.
 
 ## Documentation
 
-Everything about the package itself is in `vendor/base/tenant/docs/`:
+Everything about the package itself is in `vendor/k2labs/base-tenant/docs/`:
 
 | | |
 |---|---|
@@ -442,7 +442,9 @@ markers and whatever the project wrote around it is left alone.
 
 ## Licence
 
-Proprietary. The package's licence is in `vendor/base/tenant/docs/LICENSE.md`.
+The package is source-available: it may be installed, used and modified inside
+your own applications, commercial ones included, but not redistributed. The
+terms are in `vendor/k2labs/base-tenant/LICENSE.md`.
 
 > Before this repository is published: `composer.json` carries no author or
 > homepage, and there is no `LICENSE` file at the repository root.
