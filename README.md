@@ -2,15 +2,18 @@
 
 A Laravel starter kit for multi-tenant B2B SaaS. Accounts, per-account
 permissions, database-driven navigation, feature flags, invitations, an audit
-trail, Stripe billing and twelve capability modules — on the first commit,
-before any of your code.
+trail, Stripe billing and fifteen capability modules — custom domains,
+per-tenant security policies, passwordless sign-in, files, metering, webhooks and
+more — on the first commit, before any of your code.
 
 ```bash
 # Once the kit is published:
 laravel new my-app --using=k2/base-tenant-kit
 
-# Today, from a local checkout — see Local development below:
-composer create-project k2/base-tenant-kit my-app --repository='…' --stability=dev
+# Today, from a local checkout, anywhere on disk — see the section below:
+composer create-project k2/base-tenant-kit my-app \
+  --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
+  --stability=dev --remove-vcs --no-install --no-scripts
 ```
 
 > **Proprietary,** and the distribution channel is not settled yet, so the first
@@ -18,6 +21,21 @@ composer create-project k2/base-tenant-kit my-app --repository='…' --stability
 
 **Requires** PHP 8.4 · Laravel 13 · Livewire 4 · Flux UI 2.4 (free tier is
 enough) · MySQL, PostgreSQL, MariaDB or SQLite
+
+## Contents
+
+- [What you get](#what-you-get)
+- [Installation](#installation)
+- [After installing](#after-installing)
+- [Building on it](#building-on-it)
+- [Security](#security)
+- [Running it in production](#running-it-in-production)
+- [Testing](#testing)
+- [Project structure](#project-structure)
+- [Taking ownership later](#taking-ownership-later)
+- [Creating a project from a local checkout](#creating-a-project-from-a-local-checkout)
+- [Documentation](#documentation)
+- [Licence](#licence)
 
 ## What you get
 
@@ -34,7 +52,7 @@ Everything below is on the first commit, tested and documented.
 | **Navigation** | Declared in code, stored in the database, reorderable and hideable per account, filtered by permission and feature flag |
 | **Feature flags** | Plan features with per-account overrides and expiry |
 | **Typed settings** | Schema classes with declared defaults, rendered as a form from the property types |
-| **Auth** | Login, registration, password reset, email verification, 2FA with recovery codes, audited impersonation |
+| **Auth** | Login, registration, password reset, email verification, 2FA with recovery codes, audited impersonation, forced password change |
 | **Billing** | Laravel Cashier with plan-based feature gates |
 | **Activity** | Account-scoped audit trail with sensitive-field filtering |
 | **Notifications** | Database notifications with a bell, polling and a daily digest |
@@ -47,6 +65,11 @@ carry their tables.
 
 | Module | What it gives you |
 |---|---|
+| **Domains** | A subdomain per customer, and domains of their own served only once a TXT record proves they control them |
+| **Security policies** | Per account: enforced 2FA with a grace period, allowed email domains, an IP allowlist with a warn-first mode, session timeout |
+| **Active sessions** | Where each person is signed in, with remote revocation that works on any session driver |
+| **Magic links** | Single-use, short-lived sign-in links that never skip the second factor |
+| **Passkeys** | WebAuthn sign-in and registration from the login screen and the profile |
 | **Usage metering** | Counters and gauges per account, plan limits enforced under a lock, 402 with an upgrade call to action, hourly reporting to Stripe Billing Meters |
 | **Files** | Direct-to-S3 uploads that never pass through PHP, collections with type and size rules, image variants, per-account quota, a media library |
 | **Imports and exports** | CSV in and out, automatic column mapping, chunked queued jobs, rejected rows returned as a file to correct and re-upload |
@@ -58,7 +81,7 @@ carry their tables.
 | **Sequences** | Correlative numbering per account, locked, with period resets and formats |
 | **Onboarding** | A declarative setup checklist that disappears when it is done |
 | **Email suppressions** | A global send guard fed by signed provider webhooks |
-| **GDPR** | Personal data export, scheduled purge, versioned terms acceptance |
+| **GDPR** | Personal data export, erasure across every table that holds personal data, scheduled purge, versioned terms acceptance |
 | **Pre-sale** | Closed registration, landing page, waiting list, founding seats |
 
 Every management screen is on one table pattern: search, sort, density and page
@@ -211,6 +234,91 @@ Webhook::dispatch('invoice.issued', ['id' => $invoice->id]);
 The full list, with the reasoning behind each one, is in
 `vendor/base/tenant/docs/USAGE.md`.
 
+## Security
+
+Each account sets its own rules at `/security`: enforced two-factor with a grace
+period, which email domains may be invited, an IP allowlist (off, warn or
+enforce) and an idle session timeout. Every default is the permissive one, so
+nothing locks anyone out until an administrator asks for it.
+
+The enforcing middleware is **not applied by default**. Add it to the
+authenticated route stack in `config/base-tenant.php`:
+
+```php
+'routes' => [
+    'auth_middleware' => [
+        'web', 'auth', 'verified', 'base-tenant.subscription',
+        'base-tenant.track-session',
+        'base-tenant.two-factor',
+        'base-tenant.ip-allowlist',
+        'base-tenant.session-timeout',
+    ],
+],
+```
+
+Put them on route groups like this, never in the global middleware stack:
+Livewire replays only route middleware on its update requests.
+
+Details in `vendor/base/tenant/docs/agents/16-security.md`.
+
+## Running it in production
+
+The package puts its recurring work on the scheduler itself — domain
+re-verification, usage reporting to Stripe, credential health checks, session
+and audit pruning, the GDPR purge — so the server needs the usual cron entry:
+
+```cron
+* * * * * cd /path/to/app && php artisan schedule:run >> /dev/null 2>&1
+```
+
+And a queue worker, because imports, exports, webhooks and notifications are
+queued:
+
+```bash
+php artisan queue:work
+```
+
+In development, `composer dev` runs the server, the queue listener, the log
+viewer and Vite together.
+
+Before the first deploy:
+
+- change `BASE_TENANT_ADMIN_EMAIL` and `BASE_TENANT_ADMIN_PASSWORD`;
+- set `BASE_TENANT_CENTRAL_DOMAINS` if you use customer subdomains or domains;
+- turn off the modules you do not use with their `BASE_TENANT_*_ENABLED` switch.
+
+## Testing
+
+```bash
+composer test
+```
+
+The suite runs against an in-memory SQLite database (`phpunit.xml`), never the
+development one. It ships with `KitSmokeTest`, which proves a fresh project
+works end to end — the package boots, routes and permissions are wired, the
+navigation renders from the database and tenant data stays put — and
+`RoutingTest`. Keep both green as you build on the kit.
+
+For your own models, the package's `TenancyAssertions` trait gives you
+`assertTenantIsolated`, `assertJobCarriesTenant` and
+`assertPermissionIsAccountScoped`.
+
+## Project structure
+
+The kit is a standard Laravel 13 application; everything multi-tenant lives in
+`vendor/base/tenant` until you take ownership of it.
+
+| | |
+|---|---|
+| `app/Console/Commands/InstallKitCommand.php` | `kit:install` — dependency or own code, database, Flux Pro |
+| `app/Models/User.php` | Extends the package's user model |
+| `config/base-tenant.php` | Permissions, roles, plans, menus and every module switch |
+| `database/seeders/DatabaseSeeder.php` | Seeds the package catalogue and the administrator; add your own here |
+| `resources/css/app.css` | Imports Flux and the package theme, with the class-based dark variant |
+| `routes/web.php` | Your routes — the package registers its own |
+| `tests/Feature/KitSmokeTest.php` | The end-to-end check of a fresh project |
+| `docs/WEBSITE-SPEC.md` | Specification of the public website |
+
 ## Taking ownership later
 
 ```bash
@@ -225,37 +333,45 @@ While scaffolded, the package stands down so nothing is registered twice, and yo
 can still go back by setting `installation_state` to `installed`. Full details in
 `vendor/base/tenant/docs/SCAFFOLD-EJECT.md`.
 
-## Local development of the kit
+## Creating a project from a local checkout
 
-The kit resolves `base/tenant` from a **sibling** checkout:
+The kit is not published yet, so `composer create-project` reads it from this
+checkout. The kit resolves `base/tenant` the same way, from an absolute path:
 
 ```json
 "repositories": {
-    "base/tenant": { "type": "path", "url": "../base-tenant" }
+    "base/tenant": { "type": "path", "url": "~/Projects/base-tenant" }
 }
 ```
 
-That path is relative to the *generated project*, so both checkouts and the new
-project have to live in the same directory:
+Composer expands `~`, so the project can be created **anywhere** — it no longer
+has to sit next to the two checkouts:
 
 ```bash
-cd ~/Projects            # where base-tenant and base-tenant-kit already are
-
 composer create-project k2/base-tenant-kit my-app \
-  --repository='{"type":"path","url":"'$PWD'/base-tenant-kit","options":{"symlink":false}}' \
-  --stability=dev \
-  --remove-vcs
+  --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
+  --stability=dev --remove-vcs --no-install --no-scripts
+
+cd my-app
+rm -rf vendor node_modules .env     # copied over from the kit checkout
+composer install
+cp .env.example .env && php artisan key:generate
+php artisan kit:install
 ```
 
-`symlink: false` for the kit, because it is a starting point and you want a real
-copy. The package stays symlinked through the block above, so edits to
-`base-tenant` show up in the project immediately.
+`--stability=dev` because the kit carries no tags, and `symlink: false` because
+the kit is a starting point and you want a real copy. The package stays
+symlinked through the block above, so edits to `base-tenant` show up in the
+project immediately.
 
-Creating it anywhere else fails with `base/tenant ^3.0 could not be found` —
-`../base-tenant` does not resolve.
+The second step exists because Composer mirrors the kit directory as it is on
+disk, ignoring `.gitignore` and `archive.exclude`: without it the new project
+inherits the kit's `vendor/`, its `node_modules/` and — worse — its `.env`.
+`--no-install --no-scripts` keeps `composer install` and the installer from
+running until that is cleaned up.
 
-Before publishing, drop the `repositories` block so the package resolves from
-wherever it ends up being distributed.
+Before publishing, drop the `repositories` block, and re-lock so `composer.lock`
+stops pointing at `/Users/…/base-tenant`.
 
 ## Documentation
 
