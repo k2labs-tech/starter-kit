@@ -96,7 +96,7 @@
     "repositories": {
         "base/tenant": {
             "type": "path",
-            "url": "../base-tenant",
+            "url": "~/Projects/base-tenant",
             "options": {
                 "symlink": true,
                 "versions": {
