@@ -10,7 +10,7 @@ more — on the first commit, before any of your code.
 # Once the kit is published:
 laravel new my-app --using=k2/base-tenant-kit
 
-# Today, from a local checkout, anywhere on disk — see the section below:
+# Today, from a local checkout, anywhere on disk — see Installation below:
 composer create-project k2/base-tenant-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
@@ -92,10 +92,51 @@ Stack: Laravel 13, Livewire 4, Flux UI (free tier), Tailwind 4, Pest.
 
 ## Installation
 
+### Creating the project from a local checkout with Composer
+
+Until the kit is published, a new project is created with Composer straight from
+the local checkouts. It needs both repositories on disk:
+
+```bash
+git clone git@github.com:k2labs-tech/base-tenant.git ~/Projects/base-tenant
+git clone git@github.com:k2labs-tech/starter-kit.git ~/Projects/base-tenant-kit
+```
+
+Then, from any directory:
+
+```bash
+# 1. Copy the kit into a new project, without installing anything yet
+composer create-project k2/base-tenant-kit my-app \
+  --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
+  --stability=dev --remove-vcs --no-install --no-scripts
+
+cd my-app
+
+# 2. Drop what Composer copied over from the kit checkout
+rm -rf vendor node_modules .env
+
+# 3. Install — base/tenant is symlinked from ~/Projects/base-tenant
+composer install
+cp .env.example .env && php artisan key:generate
+
+# 4. Set up the project
+php artisan kit:install
+```
+
+Step 2 matters: Composer mirrors the kit directory as it is on disk, so without
+it the new project would inherit the kit's `vendor/`, `node_modules/` and `.env`.
+Why each flag is there is explained in
+[Creating a project from a local checkout](#creating-a-project-from-a-local-checkout).
+
+If the checkouts live somewhere other than `~/Projects`, change the `url` in the
+command above and the `base/tenant` repository in `composer.json`.
+
+### What `kit:install` asks
+
 However the project is created, it ends by running `php artisan kit:install`,
 which asks three things.
 
-### 1. How the project should relate to the package
+#### 1. How the project should relate to the package
 
 **As a dependency** *(recommended)* — the tenancy, permission and navigation code
 lives in `base/tenant`. You get fixes and features with `composer update`. You can
@@ -112,7 +153,7 @@ php artisan kit:install --dependency   # skip the question
 php artisan kit:install --own          # skip it the other way
 ```
 
-### 2. The database
+#### 2. The database
 
 The installer asks for the connection before anything else: driver (sqlite,
 mysql, mariadb or pgsql) and then only what that driver needs — file path for
@@ -127,7 +168,7 @@ again on an already-working project:
 php artisan k2labs-base:install --database
 ```
 
-### 3. Whether you want Flux UI Pro
+#### 3. Whether you want Flux UI Pro
 
 Optional. **The kit and the package use only free Flux components**, so Pro buys
 you nothing unless you want its own components — charts, date pickers, tables,
