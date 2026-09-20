@@ -400,7 +400,8 @@ cp .env.example .env && php artisan key:generate
 php artisan kit:install
 ```
 
-`--stability=dev` because the kit carries no tags, and `symlink: false` because
+`--stability=dev` because the local checkout is usually ahead of its last tag,
+so Composer sees it as a dev version, and `symlink: false` because
 the kit is a starting point and you want a real copy. The package stays
 symlinked through the block above, so edits to `base-tenant` show up in the
 project immediately.
