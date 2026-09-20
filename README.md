@@ -8,10 +8,10 @@ more — on the first commit, before any of your code.
 
 ```bash
 # Once the kit is published:
-laravel new my-app --using=k2/base-tenant-kit
+laravel new my-app --using=k2labs/base-tenant-kit
 
 # Today, from a local checkout, anywhere on disk — see Installation below:
-composer create-project k2/base-tenant-kit my-app \
+composer create-project k2labs/base-tenant-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 ```
@@ -106,7 +106,7 @@ Then, from any directory:
 
 ```bash
 # 1. Copy the kit into a new project, without installing anything yet
-composer create-project k2/base-tenant-kit my-app \
+composer create-project k2labs/base-tenant-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 
@@ -389,7 +389,7 @@ Composer expands `~`, so the project can be created **anywhere** — it no longe
 has to sit next to the two checkouts:
 
 ```bash
-composer create-project k2/base-tenant-kit my-app \
+composer create-project k2labs/base-tenant-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 
@@ -442,9 +442,9 @@ markers and whatever the project wrote around it is left alone.
 
 ## Licence
 
-The package is source-available: it may be installed, used and modified inside
-your own applications, commercial ones included, but not redistributed. The
-terms are in `vendor/k2labs/base-tenant/LICENSE.md`.
+Source-available, not open source. Projects you create from the kit are yours:
+modify them, keep them private, sell what you build. What you may not do is
+republish the kit itself as a kit. The terms are in [`LICENSE.md`](LICENSE.md).
 
-> Before this repository is published: `composer.json` carries no author or
-> homepage, and there is no `LICENSE` file at the repository root.
+The package the kit depends on has its own licence, in
+`vendor/k2labs/base-tenant/LICENSE.md`.

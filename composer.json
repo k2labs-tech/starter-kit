@@ -1,17 +1,41 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "k2/base-tenant-kit",
+    "name": "k2labs/base-tenant-kit",
     "type": "project",
+    "homepage": "https://k2labs.tech/products",
     "description": "Laravel starter kit for multi-tenant SaaS: accounts, granular permissions, database-driven navigation and feature flags.",
     "keywords": [
         "laravel",
         "starter-kit",
         "multi-tenant",
+        "multitenancy",
         "saas",
+        "tenancy",
         "rbac",
-        "livewire"
+        "permissions",
+        "livewire",
+        "flux",
+        "cashier"
     ],
     "license": "proprietary",
+    "authors": [
+        {
+            "name": "Dani",
+            "email": "dani@ideasandbusiness.com"
+        },
+        {
+            "name": "Nico",
+            "email": "nico@ideasandbusiness.com"
+        },
+        {
+            "name": "Enric",
+            "email": "enric@ideasandbusiness.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/k2labs-tech/starter-kit/issues",
+        "source": "https://github.com/k2labs-tech/starter-kit"
+    },
     "require": {
         "php": "^8.4",
         "laravel/framework": "^13.0",
