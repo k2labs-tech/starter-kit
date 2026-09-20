@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "k2labs/base-tenant-kit",
+    "name": "k2labs/starter-kit",
     "type": "project",
     "homepage": "https://k2labs.tech/products",
     "description": "Laravel starter kit for multi-tenant SaaS: accounts, granular permissions, database-driven navigation and feature flags.",

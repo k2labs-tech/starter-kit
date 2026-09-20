@@ -1,10 +1,10 @@
-# K2labs Base Tenant Starter Kit Licence
+# K2labs Starter Kit Licence
 
 Copyright (c) 2025-2026 Ideas and Business Management. All rights reserved.
 
 K2labs is a brand of Ideas and Business Management.
 
-This licence covers the `k2labs/base-tenant-kit` starter kit (the "Kit"). The
+This licence covers the `k2labs/starter-kit` starter kit (the "Kit"). The
 `k2labs/base-tenant` package the Kit depends on has its own licence, which
 applies to it: see `vendor/k2labs/base-tenant/LICENSE.md`.
 

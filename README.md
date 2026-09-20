@@ -8,10 +8,10 @@ more — on the first commit, before any of your code.
 
 ```bash
 # Once the kit is published:
-laravel new my-app --using=k2labs/base-tenant-kit
+laravel new my-app --using=k2labs/starter-kit
 
 # Today, from a local checkout, anywhere on disk — see Installation below:
-composer create-project k2labs/base-tenant-kit my-app \
+composer create-project k2labs/starter-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 ```
@@ -106,7 +106,7 @@ Then, from any directory:
 
 ```bash
 # 1. Copy the kit into a new project, without installing anything yet
-composer create-project k2labs/base-tenant-kit my-app \
+composer create-project k2labs/starter-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 
@@ -389,7 +389,7 @@ Composer expands `~`, so the project can be created **anywhere** — it no longe
 has to sit next to the two checkouts:
 
 ```bash
-composer create-project k2labs/base-tenant-kit my-app \
+composer create-project k2labs/starter-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 
