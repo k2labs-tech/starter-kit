@@ -19,6 +19,10 @@
 /storage/*.key
 /storage/pail
 /vendor
+
+# The kit ships without one: a lock here would pin the absolute paths of
+# whoever generated it onto every project created from the checkout.
+/composer.lock
 Homestead.json
 Homestead.yaml
 Thumbs.db

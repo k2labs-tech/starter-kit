@@ -7,17 +7,15 @@ per-tenant security policies, passwordless sign-in, files, metering, webhooks an
 more — on the first commit, before any of your code.
 
 ```bash
-# Once the kit is published:
 laravel new my-app --using=k2labs/starter-kit
 
-# Today, from a local checkout, anywhere on disk — see Installation below:
-composer create-project k2labs/starter-kit my-app \
-  --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
-  --stability=dev --remove-vcs --no-install --no-scripts
+# Composer alone does the same
+composer create-project k2labs/starter-kit my-app
 ```
 
-> **Proprietary,** and the distribution channel is not settled yet, so the first
-> command does not work yet. The second one does.
+> **Proprietary,** source-available. The kit and the package it depends on are
+> both installable from Packagist; what you may not do is republish the kit
+> itself as a kit. See [Licence](#licence).
 
 **Requires** PHP 8.4 · Laravel 13 · Livewire 4 · Flux UI 2.4 (free tier is
 enough) · MySQL, PostgreSQL, MariaDB or SQLite
@@ -92,44 +90,37 @@ Stack: Laravel 13, Livewire 4, Flux UI (free tier), Tailwind 4, Pest.
 
 ## Installation
 
-### Creating the project from a local checkout with Composer
+### Creating the project
 
-Until the kit is published, a new project is created with Composer straight from
-the local checkouts. It needs both repositories on disk:
+The kit is published on Packagist as `k2labs/starter-kit`, and it pulls
+`k2labs/base-tenant` in as a dependency:
 
 ```bash
-git clone git@github.com:k2labs-tech/base-tenant.git ~/Projects/base-tenant
-git clone git@github.com:k2labs-tech/starter-kit.git ~/Projects/base-tenant-kit
+laravel new my-app --using=k2labs/starter-kit
 ```
 
-Then, from any directory:
+Composer alone does the same:
 
 ```bash
-# 1. Copy the kit into a new project, without installing anything yet
-composer create-project k2labs/starter-kit my-app \
-  --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
-  --stability=dev --remove-vcs --no-install --no-scripts
+composer create-project k2labs/starter-kit my-app
+```
 
+Either command installs the dependencies, writes `.env`, generates the
+application key and finishes by running `php artisan kit:install`, which asks
+the three questions below. After it:
+
+```bash
 cd my-app
-
-# 2. Drop what Composer copied over from the kit checkout
-rm -rf vendor node_modules .env
-
-# 3. Install — k2labs/base-tenant is symlinked from ~/Projects/base-tenant
-composer install
-cp .env.example .env && php artisan key:generate
-
-# 4. Set up the project
-php artisan kit:install
+npm install && npm run build
+php artisan serve
 ```
 
-Step 2 matters: Composer mirrors the kit directory as it is on disk, so without
-it the new project would inherit the kit's `vendor/`, `node_modules/` and `.env`.
-Why each flag is there is explained in
-[Creating a project from a local checkout](#creating-a-project-from-a-local-checkout).
+A project created this way has no `composer.lock` from us — the kit ships
+without one so nothing pins the paths of whoever tagged it. Yours is written on
+the first install; commit it.
 
-If the checkouts live somewhere other than `~/Projects`, change the `url` in the
-command above and the `k2labs/base-tenant` repository in `composer.json`.
+To work against a local checkout of the package or of the kit itself, see
+[Creating a project from a local checkout](#creating-a-project-from-a-local-checkout).
 
 ### What `kit:install` asks
 
@@ -376,47 +367,71 @@ can still go back by setting `installation_state` to `installed`. Full details i
 
 ## Creating a project from a local checkout
 
-The kit is not published yet, so `composer create-project` reads it from this
-checkout. The kit resolves `k2labs/base-tenant` the same way, from an absolute path:
+Only for working on the kit or on the package itself. Everyone else installs
+from Packagist, as in [Installation](#installation).
 
-```json
-"repositories": {
-    "k2labs/base-tenant": { "type": "path", "url": "~/Projects/base-tenant" }
-}
-```
-
-Composer expands `~`, so the project can be created **anywhere** — it no longer
-has to sit next to the two checkouts:
+**The kit from a local checkout.** `composer create-project` reads it straight
+from the directory:
 
 ```bash
+git clone git@github.com:k2labs-tech/starter-kit.git ~/Projects/base-tenant-kit
+
 composer create-project k2labs/starter-kit my-app \
   --repository='{"type":"path","url":"~/Projects/base-tenant-kit","options":{"symlink":false}}' \
   --stability=dev --remove-vcs --no-install --no-scripts
 
 cd my-app
-rm -rf vendor node_modules .env     # copied over from the kit checkout
+rm -rf vendor node_modules .env composer.lock   # copied from the checkout
 composer install
 cp .env.example .env && php artisan key:generate
 php artisan kit:install
 ```
 
-`--stability=dev` because the local checkout is usually ahead of its last tag,
-so Composer sees it as a dev version, and `symlink: false` because
-the kit is a starting point and you want a real copy. The package stays
-symlinked through the block above, so edits to `base-tenant` show up in the
-project immediately.
+Composer expands `~`, so the project can be created anywhere; it does not have
+to sit next to the checkout. `--stability=dev` because the checkout is usually
+ahead of its last tag, so Composer sees it as a dev version, and
+`symlink: false` because the kit is a starting point and you want a real copy.
 
-The second step exists because Composer mirrors the kit directory as it is on
+The `rm -rf` step exists because Composer mirrors the kit directory as it is on
 disk, ignoring `.gitignore` and `archive.exclude`: without it the new project
-inherits the kit's `vendor/`, its `node_modules/` and — worse — its `.env`.
-`--no-install --no-scripts` keeps `composer install` and the installer from
-running until that is cleaned up.
+inherits the kit's `vendor/`, its `node_modules/`, its `.env` and its
+`composer.lock` — and that lock pins `k2labs/base-tenant` to the absolute path
+of the checkout, so the new project silently runs on your working copy instead
+of the released package. `--no-install --no-scripts` keeps `composer install`
+and the installer from running until that is cleaned up.
 
-The kit ships without a `composer.lock`: a lock would pin the absolute path of
-whoever generated it. Each project resolves its own on the first
-`composer install`, and should commit it.
+None of this reaches anyone installing from Packagist: the published archive
+carries no `vendor/`, no `.env` and no lock.
 
-Before publishing, drop the `repositories` block.
+**The package from a local checkout.** The kit's `composer.json` carries no
+`repositories` block — a path repository in a published kit breaks every
+install that does not have that path on disk — so point the project at the
+checkout yourself, in the project, never in the kit:
+
+```bash
+git clone git@github.com:k2labs-tech/base-tenant.git ~/Projects/base-tenant
+
+cd my-app
+composer config repositories.k2labs/base-tenant \
+  '{"type":"path","url":"~/Projects/base-tenant","options":{"symlink":true,"versions":{"k2labs/base-tenant":"3.0.1"}}}'
+composer update k2labs/base-tenant
+```
+
+`symlink: true` makes edits in `~/Projects/base-tenant` show up in the project
+immediately. The `versions` pin tells Composer to treat the checkout as that
+released version, so the project keeps `minimum-stability: stable`; raise it as
+the package is tagged. Drop the block with
+`composer config --unset repositories.k2labs/base-tenant` to go back to
+Packagist.
+
+To develop the kit itself against a local package without touching the kit's
+tracked `composer.json`, declare the same repository globally instead — it
+applies to every project on the machine and ships nowhere:
+
+```bash
+composer global config repositories.k2labs/base-tenant \
+  '{"type":"path","url":"~/Projects/base-tenant","options":{"symlink":true}}'
+```
 
 ## Documentation
 
