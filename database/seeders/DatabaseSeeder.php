@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use Base\Tenant\Database\Seeders\AdminUserSeeder;
-use Base\Tenant\Database\Seeders\InitialLoadSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -24,12 +22,32 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             // Permissions, global roles and the product menus.
-            InitialLoadSeeder::class,
+            ...$this->tenantSeeder('InitialLoadSeeder'),
 
             // A staff account to sign in with.
-            AdminUserSeeder::class,
+            ...$this->tenantSeeder('AdminUserSeeder'),
         ]);
 
         // Add your own seeders below.
+    }
+
+    /**
+     * The package's seeders live in its namespace while it is a dependency,
+     * and in this one once `k2labs-base:eject` has copied them here. Naming
+     * either of them outright is what breaks the other: an import of a class
+     * that has moved is a fatal on `db:seed`, on a database that then has
+     * nothing to sign in with.
+     *
+     * @return array<int, class-string>
+     */
+    protected function tenantSeeder(string $seeder): array
+    {
+        foreach ([__NAMESPACE__, 'Base\\Tenant\\Database\\Seeders'] as $namespace) {
+            if (class_exists($class = $namespace.'\\'.$seeder)) {
+                return [$class];
+            }
+        }
+
+        return [];
     }
 }

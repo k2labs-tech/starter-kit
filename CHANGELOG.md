@@ -3,6 +3,18 @@
 All notable changes to the starter kit are documented here. It is versioned
 alongside `k2labs/base-tenant`.
 
+## [3.0.3] - 2026-09-22
+
+Requires `k2labs/base-tenant` ^3.0.3.
+
+### Fixed
+
+- `database/seeders/DatabaseSeeder.php` named the package's seeders outright,
+  so `php artisan db:seed` was a fatal in any project that had run
+  `k2labs-base:eject`: the classes had moved into the project's own namespace.
+  It resolves either, which means a freshly migrated database still leaves you
+  with something to sign in with, before and after taking ownership of the code.
+
 ## [3.0.2] - 2026-09-21
 
 Requires `k2labs/base-tenant` ^3.0.2.
